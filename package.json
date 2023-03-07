@@ -10,12 +10,12 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "@types/node-fetch": "^2.6.2",
-    "playwright": "^1.31.2",
-    "ts-node": "^10.9.1"
+    "@types/node-fetch": "^2.6.2"
   },
   "dependencies": {
     "node-fetch": "^2.6.9",
-    "ts-dotenv": "^0.9.1"
+    "ts-dotenv": "^0.9.1",
+    "playwright": "^1.31.2",
+    "ts-node": "^10.9.1"
   }
 }
