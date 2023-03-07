@@ -1,0 +1,41 @@
+version: "3.8"
+networks:
+  default:
+
+services:
+  nginx:
+    image: nginx:stable-alpine
+    container_name: nginx
+    ports:
+      - 80:80
+    networks:
+      - default
+
+  ngrok:
+    image: wernight/ngrok:latest
+    ports:
+      - 4040:4040
+    environment:
+      NGROK_PROTOCOL: http
+      NGROK_PORT: nginx:80
+      NGROK_AUTH: ${NGROK_AUTH}
+      NGROK_USERNAME: ${NGROK_USERNAME}
+      NGROK_PASSWORD: ${NGROK_PASSWORD}
+    depends_on:
+      - nginx
+    networks:
+      - default
+
+  one_shot_node:
+    build: ./update-webhook
+    environment:
+      NGROK_HOST: ngrok
+      NGROK_USERNAME: ${NGROK_USERNAME}
+      NGROK_PASSWORD: ${NGROK_PASSWORD}
+      TOKEN: ${TOKEN}
+      SECRET: ${SECRET}
+      NONCE: ${NONCE}
+    networks:
+      - default
+    depends_on:
+      - ngrok
