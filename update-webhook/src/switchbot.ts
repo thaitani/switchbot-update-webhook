@@ -7,7 +7,6 @@ import { NONCE, SECRET, TOKEN } from "./env";
 // でもめんどくさいのでこのまま
 async function updateWebhookUrl(url: string) {
   const urls = await queryWebhook();
-  console.log(`update webhook url: webhooks => ${urls}`);
 
   let sameUrlExisting = false;
   for await (const _url of urls) {
