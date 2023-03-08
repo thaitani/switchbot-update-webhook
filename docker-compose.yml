@@ -3,31 +3,48 @@ networks:
   default:
 
 services:
-  nginx:
-    image: nginx:stable-alpine
-    container_name: nginx
+  mqtt:
+    image: eclipse-mosquitto
+    container_name: mqtt
+    expose:
+      - 1883
     ports:
-      - 80:80
+      - 1883:1883
+    restart: unless-stopped
     networks:
       - default
+    volumes:
+      - ./mosquitto/config:/mosquitto/config
+
+  node:
+    build: ./receiver
+    container_name: node
+    ports:
+      - 3000:3000
+    networks:
+      - default
+    depends_on:
+      - mqtt
 
   ngrok:
     image: wernight/ngrok:latest
+    container_name: ngrok
     ports:
       - 4040:4040
     environment:
       NGROK_PROTOCOL: http
-      NGROK_PORT: nginx:80
+      NGROK_PORT: node:3000
       NGROK_AUTH: ${NGROK_AUTH}
       NGROK_USERNAME: ${NGROK_USERNAME}
       NGROK_PASSWORD: ${NGROK_PASSWORD}
     depends_on:
-      - nginx
+      - node
     networks:
       - default
 
   one_shot_node:
     build: ./update-webhook
+    container_name: one_shot_node
     environment:
       NGROK_HOST: ngrok
       NGROK_USERNAME: ${NGROK_USERNAME}
